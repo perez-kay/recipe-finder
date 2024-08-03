@@ -1,38 +1,72 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  --green: #62a14f;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html {
+  font-size: 62.5%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+nav {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  justify-content: space-between;
+  font-size: 1.5rem;
+  margin: 1rem;
+}
+
+main {
+  margin: 2rem;
+}
+
+button {
+  border: 0;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  border-radius: 0.7rem;
+  background-color: var(--green);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.btn-search {
+  margin-left: 0.7rem;
+  padding: 1rem;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.search-bar {
+  border: none;
+  padding: 1.1rem 1.6rem;
+  font-size: 1.8rem;
+  border-radius: 0.7rem;
+  width: 40rem;
+  background-color: #eeee;
+}
+
+.recipe {
+  display: flex;
+  list-style: none;
+  margin: 1rem 0;
+  background-color: #eee;
+  border-radius: 0.7rem;
+  flex-basis: 100%;
+  flex: 1;
+  width: 100%;
+}
+
+.recipe img {
+  width: 20%;
+  border-radius: 0.7rem;
+}
+
+.recipe-info {
+  margin-left: 1rem;
 }
