@@ -92,6 +92,7 @@ function Button({ extraClass, children, type }) {
 function RecipeList() {
   return (
     <div className="recipe-list">
+      {/* <h1>Found X Results for: [search term]</h1> */}
       <ul>
         {tempData.map((recipe) => (
           <Recipe
@@ -100,6 +101,7 @@ function RecipeList() {
             author={recipe.creditsText}
             servings={recipe.servings}
             id={recipe.id}
+            readyTime={recipe.readyInMinutes}
             key={recipe.id}
           />
         ))}
@@ -108,14 +110,25 @@ function RecipeList() {
   );
 }
 
-function Recipe({ title, image, author, servings, id }) {
+function Recipe({ title, image, author, servings, id, readyTime }) {
   return (
-    <li className="recipe">
-      <img src={image} alt={`${title}`} />
+    <li className="recipe-card">
+      <div>
+        <img src={image} alt={`${title}`} />
+      </div>
       <div className="recipe-info">
         <h2>{title}</h2>
-        <h3>Created by {author}</h3>
-        <h4>Serves {servings} People</h4>
+        <p>Created by {author}</p>
+        <div className="recipe-stats">
+          <div className="servings">
+            <box-icon name="bowl-hot" color="#888"></box-icon>
+            <p>{servings} Servings</p>
+          </div>
+          <div className="ready-time">
+            <box-icon name="time-five" color="#888"></box-icon>
+            <p>{readyTime} Minutes</p>
+          </div>
+        </div>
       </div>
     </li>
   );
