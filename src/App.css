@@ -24,12 +24,6 @@ nav {
   margin: 1rem;
 }
 
-main {
-  display: grid;
-  margin-left: 1rem;
-  grid-template-columns: 40% 60%;
-}
-
 button {
   border: 0;
   padding: 0.5rem;
@@ -110,7 +104,6 @@ button {
 }
 
 .recipe-details {
-  width: 100%;
 }
 
 @media (max-width: 992px) {

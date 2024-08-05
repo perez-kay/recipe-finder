@@ -1,5 +1,8 @@
 import './App.css';
 import 'boxicons';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 // not secure!!
 const API_KEY = '961d0e9dd29244c0ad82adaaad1c15dd';
@@ -41,9 +44,16 @@ export default function App() {
   return (
     <div>
       <NavBar />
-      <main>
-        <RecipeList />
-      </main>
+      <Container fluid>
+        <Row>
+          <Col>
+            <RecipeList />
+          </Col>
+          <Col>
+            <RecipeDetails />
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 }
@@ -83,7 +93,7 @@ function SearchBar() {
 
 function Button({ extraClass, children, type }) {
   return (
-    <button className={`btn ${extraClass}`} type={type}>
+    <button className={extraClass} type={type}>
       {children}
     </button>
   );
@@ -131,5 +141,14 @@ function Recipe({ title, image, author, servings, id, readyTime }) {
         </div>
       </div>
     </li>
+  );
+}
+
+function RecipeDetails() {
+  return (
+    <div className="recipe-details">
+      <h2>Title</h2>
+      <p>Created by Author</p>
+    </div>
   );
 }
