@@ -84,10 +84,21 @@ function NavBar() {
 }
 
 function SearchBar() {
+  const [query, setQuery] = useState('');
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    // do the fetch here
+    console.log(query);
+  }
+
   return (
     <div>
-      <form className="search">
+      <form className="search" onSubmit={(e) => handleSubmit(e)}>
         <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          name="search"
           className="search-bar"
           type="text"
           placeholder="Search for a recipe"
@@ -129,13 +140,10 @@ function RecipeList() {
 function Recipe({ title, image, author, servings, id, readyTime }) {
   return (
     <li className="d-flex border rounded align-items-start">
-      <img className="rounded-start" src={image} alt="" />
-      <div
-        style={{ height: '230px' }}
-        className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-2 pt-2"
-      >
+      <img className="rounded-start" src={image} alt="" width={210} />
+      <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-2 pt-2">
         <h4>{title}</h4>
-        <h6 className="text-muted">Created by {author}</h6>
+        <h6 className="text-muted pb-2">Created by {author}</h6>
         <div className="recipe-stats text-center mt-auto d-flex align-items-end justify-content-around">
           <div className="ready-time">
             <box-icon name="time-five" color="#888"></box-icon>
