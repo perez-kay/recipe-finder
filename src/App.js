@@ -45,16 +45,40 @@ const tempData = [
 ];
 
 export default function App() {
+  const [recipe, setRecipe] = useState({});
+  const [recipeList, setRecipeList] = useState([]);
+
+  const [query, setQuery] = useState('');
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    (async function () {
+      const res = await fetch(
+        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=3&apiKey=961d0e9dd29244c0ad82adaaad1c15dd&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
+      );
+
+      const data = await res.json();
+      setRecipeList(data.results);
+    })();
+  }
+
+  function handleSetRecipe(recipe) {
+    setRecipe(recipe);
+  }
+
   return (
     <div>
-      <NavBar />
+      <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
       <Container fluid>
         <Row>
           <Col>
-            <RecipeList />
+            <RecipeList
+              recipeList={recipeList}
+              onSelectRecipe={handleSetRecipe}
+            />
           </Col>
           <Col>
-            <RecipeDetails />
+            <RecipeDetails recipe={recipe} />
           </Col>
         </Row>
       </Container>
@@ -62,19 +86,12 @@ export default function App() {
   );
 }
 
-function NavBar() {
+function NavBar({ onSubmit, query, setQuery }) {
   return (
-    // <nav>
-    //   <Title />
-    //   <SearchBar />
-    //   <Button>
-    //     <box-icon type="solid" name="fridge" color="white"></box-icon>
-    //   </Button>
-    // </nav>
     <Navbar>
       <Container fluid>
         <Navbar.Brand className="fw-bold">Recipe Finder</Navbar.Brand>
-        <SearchBar />
+        <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
         <Button>
           <box-icon type="solid" name="fridge" color="white"></box-icon>
         </Button>
@@ -83,18 +100,10 @@ function NavBar() {
   );
 }
 
-function SearchBar() {
-  const [query, setQuery] = useState('');
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    // do the fetch here
-    console.log(query);
-  }
-
+function SearchBar({ onSubmit, query, setQuery }) {
   return (
     <div>
-      <form className="search" onSubmit={(e) => handleSubmit(e)}>
+      <form className="search" onSubmit={(e) => onSubmit(e)}>
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -119,11 +128,12 @@ function Button({ extraClass, children, type }) {
   );
 }
 
-function RecipeList() {
+function RecipeList({ recipeList, onSelectRecipe }) {
   return (
     <ul className="list-unstyled">
-      {tempData.map((recipe) => (
+      {recipeList.map((recipe) => (
         <Recipe
+          onSelectRecipe={onSelectRecipe}
           title={recipe.title}
           image={recipe.image}
           author={recipe.creditsText}
@@ -137,9 +147,20 @@ function RecipeList() {
   );
 }
 
-function Recipe({ title, image, author, servings, id, readyTime }) {
+function Recipe({
+  title,
+  image,
+  author,
+  servings,
+  id,
+  readyTime,
+  onSelectRecipe,
+}) {
   return (
-    <li className="d-flex border rounded align-items-start">
+    <li
+      className="d-flex border rounded align-items-start"
+      onClick={() => onSelectRecipe({ title, image, author, id })}
+    >
       <img className="rounded-start" src={image} alt="" width={210} />
       <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-2 pt-2">
         <h4>{title}</h4>
@@ -178,46 +199,52 @@ const tempSteps = [
   'Remove from oven and serve hot.',
 ];
 
-function RecipeDetails({ selectedId }) {
-  const [ingredients, setIngredients] = useState(tempIngredients);
-  const [steps, setSteps] = useState(tempSteps);
+function RecipeDetails({ recipe }) {
+  const [ingredients, setIngredients] = useState([]);
+  const [steps, setSteps] = useState([]);
 
-  // useEffect(function () {
-  //   async function fetchIngredients() {
+  const { title, id, author, image } = recipe;
 
-  //       const res = await fetch(
-  //         `https://api.spoonacular.com/recipes/715595/information?apiKey=${API_KEY}`
-  //       );
-  //       const data = await res.json();
-  //       const ingredients = data.extendedIngredients.map(
-  //         (ingredient) => ingredient.original
-  //       );
-  //       console.log(ingredients);
-  //       setIngredients(ingredients);
-  //   }
-  //   fetchIngredients();
-  // }, [selectedId]);
+  useEffect(
+    function () {
+      async function fetchIngredients() {
+        if (!id) return;
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`
+        );
+        const data = await res.json();
+        const ingredients = data.extendedIngredients.map(
+          (ingredient) => ingredient.original
+        );
+        console.log(ingredients);
+        setIngredients(ingredients);
+      }
+      fetchIngredients();
+    },
+    [id]
+  );
 
-  // useEffect(
-  //   function () {
-  //     async function fetchSteps() {
-  //       const res = await fetch(
-  //         `https://api.spoonacular.com/recipes/715595/analyzedInstructions?apiKey=${API_KEY}`
-  //       );
-  //       const [data] = await res.json();
-  //       const steps = data.steps.map((step) => step.step);
-  //       console.log(steps);
-  //       setSteps(steps);
-  //     }
-  //     fetchSteps();
-  //   },
-  //   [selectedId]
-  // );
+  useEffect(
+    function () {
+      async function fetchSteps() {
+        if (!id) return;
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${API_KEY}`
+        );
+        const [data] = await res.json();
+        const steps = data.steps.map((step) => step.step);
+        console.log(steps);
+        setSteps(steps);
+      }
+      fetchSteps();
+    },
+    [id]
+  );
 
   return (
     <Card>
-      <Card.Title>Title</Card.Title>
-      <Card.Subtitle>Author</Card.Subtitle>
+      <Card.Title>{title}</Card.Title>
+      <Card.Subtitle>{author}</Card.Subtitle>
       <Card.Body>
         <h5>Ingredients</h5>
         <ul>
