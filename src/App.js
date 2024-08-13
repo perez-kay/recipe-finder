@@ -6,14 +6,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Navbar from 'react-bootstrap/Navbar';
 import Card from 'react-bootstrap/Card';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // not secure!!
 const API_KEY = '961d0e9dd29244c0ad82adaaad1c15dd';
 
 export default function App() {
   const [recipe, setRecipe] = useState(null);
-  const [recipeList, setRecipeList] = useState([]);
+  const [recipeList, setRecipeList] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [steps, setSteps] = useState([]);
 
@@ -38,39 +40,70 @@ export default function App() {
   function handleSubmit(e) {
     e.preventDefault();
     (async function () {
-      const res = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=961d0e9dd29244c0ad82adaaad1c15dd&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
-      );
-
-      const data = await res.json();
-      setRecipeList(filterResults(data.results));
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=961d0e9dd29244c0ad82adaaad1c15dd&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
+        );
+        if (res.status === 402)
+          throw new Error('API call limit exceeded. Come back tomorrow!');
+        if (!res.ok)
+          throw new Error('Something went wrong when fetching your recipes.');
+        const data = await res.json();
+        if (data.results.length === 0)
+          throw new Error(
+            'No recipes with that search term exist. Maybe you should create your own!'
+          );
+        setRecipeList(filterResults(data.results));
+      } catch (err) {
+        setError(err);
+      }
     })();
     setRecipe(null);
   }
 
   function handleSetRecipe(recipe) {
     setRecipe(recipe);
-    const { id } = recipe;
     async function fetchIngredients() {
-      const res = await fetch(
-        `https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`
-      );
-      const data = await res.json();
-      const ingredients = data.extendedIngredients.map(
-        (ingredient) => ingredient.original
-      );
-      console.log('ingredients fetched');
-      setIngredients(ingredients);
+      try {
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${API_KEY}`
+        );
+        if (res.status === 402)
+          throw new Error('API call limit exceeded. Come back tomorrow!');
+        if (!res.ok)
+          throw new Error(
+            'Something went wrong when fetching the ingredients list.'
+          );
+        const data = await res.json();
+        const ingredients = data.extendedIngredients.map(
+          (ingredient) => ingredient.original
+        );
+        console.log('ingredients fetched');
+        setIngredients(ingredients);
+      } catch (err) {
+        setError(err);
+      }
     }
     fetchIngredients();
     async function fetchSteps() {
-      const res = await fetch(
-        `https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${API_KEY}`
-      );
-      const [data] = await res.json();
-      const steps = data.steps.map((step) => step.step);
-      console.log('steps fetched');
-      setSteps(steps);
+      try {
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/${recipe.id}/analyzedInstructions?apiKey=${API_KEY}`
+        );
+        if (res.status === 402)
+          throw new Error('API call limit exceeded. Come back tomorrow!');
+        if (!res.ok)
+          throw new Error(
+            'Something went wrong when fetching the ingredients list.'
+          );
+        const [data] = await res.json();
+        const steps = data.steps.map((step) => step.step);
+        console.log('steps fetched');
+        setSteps(steps);
+      } catch (err) {
+        setError(err);
+      }
     }
     fetchSteps();
   }
@@ -79,23 +112,29 @@ export default function App() {
     <div>
       <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
       <Container>
-        <Row>
-          <Col>
-            <RecipeList
-              recipeList={recipeList}
-              onSelectRecipe={handleSetRecipe}
-            />
-          </Col>
-          <Col>
-            {recipe && (
-              <RecipeDetails
-                recipe={recipe}
-                ingredients={ingredients}
-                steps={steps}
+        {recipeList ? (
+          <Row>
+            <Col>
+              <RecipeList
+                recipeList={recipeList}
+                onSelectRecipe={handleSetRecipe}
               />
-            )}
-          </Col>
-        </Row>
+            </Col>
+            <Col>
+              {recipe && (
+                <RecipeDetails
+                  recipe={recipe}
+                  ingredients={ingredients}
+                  steps={steps}
+                />
+              )}
+            </Col>
+          </Row>
+        ) : (
+          <h1 className="text-center mt-4">
+            Feeling hungry? Search for a tasty recipe!
+          </h1>
+        )}
       </Container>
     </div>
   );
@@ -105,7 +144,9 @@ function NavBar({ onSubmit, query, setQuery }) {
   return (
     <Navbar>
       <Container fluid>
-        <Navbar.Brand className="fw-bold">Recipe Finder</Navbar.Brand>
+        <Navbar.Brand className="fw-bold">
+          <span>🍽️</span>FoodFinder
+        </Navbar.Brand>
         <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
         <Button>
           <box-icon type="solid" name="fridge" color="white"></box-icon>
@@ -176,7 +217,7 @@ function Recipe({
 }) {
   return (
     <li
-      className="d-flex border-top border-bottom align-items-start"
+      className="recipe-list-item d-flex border-top border-bottom align-items-start"
       onClick={() =>
         onSelectRecipe({ title, image, author, id, readyTime, servings })
       }
