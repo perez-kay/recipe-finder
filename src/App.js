@@ -13,7 +13,7 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 
 export default function App() {
   const [recipe, setRecipe] = useState(null);
-  const [recipeList, setRecipeList] = useState(null);
+  const [recipeList, setRecipeList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
@@ -57,6 +57,8 @@ export default function App() {
         setRecipeList(filterResults(data.results));
       } catch (err) {
         setError(err);
+      } finally {
+        setIsLoading(false);
       }
     })();
     setRecipe(null);
@@ -95,7 +97,7 @@ export default function App() {
           throw new Error('API call limit exceeded. Come back tomorrow!');
         if (!res.ok)
           throw new Error(
-            'Something went wrong when fetching the ingredients list.'
+            'Something went wrong when fetching the instructions.'
           );
         const [data] = await res.json();
         const steps = data.steps.map((step) => step.step);
@@ -112,29 +114,31 @@ export default function App() {
     <div>
       <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
       <Container>
-        {recipeList ? (
-          <Row>
-            <Col>
+        <Row>
+          <Col>
+            {isLoading && <Loader />}
+            {!isLoading && (
               <RecipeList
                 recipeList={recipeList}
                 onSelectRecipe={handleSetRecipe}
               />
-            </Col>
-            <Col>
-              {recipe && (
-                <RecipeDetails
-                  recipe={recipe}
-                  ingredients={ingredients}
-                  steps={steps}
-                />
-              )}
-            </Col>
-          </Row>
-        ) : (
+            )}
+          </Col>
+          <Col>
+            {recipe && (
+              <RecipeDetails
+                recipe={recipe}
+                ingredients={ingredients}
+                steps={steps}
+              />
+            )}
+          </Col>
+        </Row>
+        {/* ) : (
           <h1 className="text-center mt-4">
             Feeling hungry? Search for a tasty recipe!
           </h1>
-        )}
+        )} */}
       </Container>
     </div>
   );
@@ -181,6 +185,20 @@ function Button({ extraClass, children, type }) {
     <button className={`button ${extraClass}`} type={type}>
       {children}
     </button>
+  );
+}
+
+function Loader() {
+  return (
+    <div
+      className="loader text-center d-flex flex-column justify-content-center"
+      style={{ height: '60vh' }}
+    >
+      <div className="loading-wheel align-self-center"></div>
+      <h3 className="pt-3" style={{ color: '#888' }}>
+        Loading
+      </h3>
+    </div>
   );
 }
 
