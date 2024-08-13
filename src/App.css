@@ -1,10 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
+:root {
+  --green: #62a14f;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  --green: #62a14f;
 }
 
 body {
@@ -34,56 +37,5 @@ body {
   background-color: #eeee;
 }
 
-/* .recipe-list ul {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  gap: 1.5rem;
+.recipe-list-item:hover {
 }
-
-.recipe-card {
-  display: flex;
-  width: 23rem;
-  padding-bottom: 1.5rem;
-  flex-direction: column;
-  list-style: none;
-  background-color: #eee;
-  border-radius: 0.7rem;
-  transition: background-color 0.1s ease-in, transform 0.1s ease-in;
-}
-
-.recipe-card:hover {
-  background-color: #e6e6e6;
-  transform: scale(1.01);
-  cursor: pointer;
-}
-
-
-.recipe-info {
-  padding: 0.5rem;
-  text-align: center;
-  }
-  
-.recipe-info h2 {
-  padding-bottom: 0.5rem;
-}
-
-
-      
-      .recipe-details {
-        }
-        
-        @media (max-width: 992px) {
-          .recipe-list ul {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-    height: 100vh;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    }
-    
-    .recipe-card {
-      margin-bottom: 1rem;
-      width: 100%;
-      }
-      } */
