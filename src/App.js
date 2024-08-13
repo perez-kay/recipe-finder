@@ -235,7 +235,7 @@ function Recipe({
       <img
         className=""
         src={image}
-        alt=""
+        alt={title}
         style={{ height: '20%', width: '40%' }}
       />
       <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-3 pt-2">
