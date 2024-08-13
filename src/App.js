@@ -12,8 +12,10 @@ import { useEffect, useState } from 'react';
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 export default function App() {
-  const [recipe, setRecipe] = useState({});
+  const [recipe, setRecipe] = useState(null);
   const [recipeList, setRecipeList] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
+  const [steps, setSteps] = useState([]);
 
   const [query, setQuery] = useState('');
 
@@ -37,16 +39,40 @@ export default function App() {
     e.preventDefault();
     (async function () {
       const res = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=7&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
+        `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
       );
 
       const data = await res.json();
       setRecipeList(filterResults(data.results));
     })();
+    setRecipe(null);
   }
 
   function handleSetRecipe(recipe) {
     setRecipe(recipe);
+    const { id } = recipe;
+    async function fetchIngredients() {
+      const res = await fetch(
+        `https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`
+      );
+      const data = await res.json();
+      const ingredients = data.extendedIngredients.map(
+        (ingredient) => ingredient.original
+      );
+      console.log('ingredients fetched');
+      setIngredients(ingredients);
+    }
+    fetchIngredients();
+    async function fetchSteps() {
+      const res = await fetch(
+        `https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${API_KEY}`
+      );
+      const [data] = await res.json();
+      const steps = data.steps.map((step) => step.step);
+      console.log('steps fetched');
+      setSteps(steps);
+    }
+    fetchSteps();
   }
 
   return (
@@ -61,7 +87,13 @@ export default function App() {
             />
           </Col>
           <Col>
-            <RecipeDetails recipe={recipe} />
+            {recipe && (
+              <RecipeDetails
+                recipe={recipe}
+                ingredients={ingredients}
+                steps={steps}
+              />
+            )}
           </Col>
         </Row>
       </Container>
@@ -145,7 +177,9 @@ function Recipe({
   return (
     <li
       className="d-flex border-top border-bottom align-items-start"
-      onClick={() => onSelectRecipe({ title, image, author, id })}
+      onClick={() =>
+        onSelectRecipe({ title, image, author, id, readyTime, servings })
+      }
     >
       <img
         className=""
@@ -153,79 +187,54 @@ function Recipe({
         alt=""
         style={{ height: '20%', width: '40%' }}
       />
-      <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-2 pt-2">
+      <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-3 pt-2">
         <h4>{title}</h4>
         <h6 className="text-muted pb-2">Created by {author}</h6>
-        <div className="recipe-stats text-center mt-auto d-flex align-items-end justify-content-around">
-          <div className="ready-time">
-            <box-icon name="time-five" color="#888"></box-icon>
-            <p>{readyTime} Minutes</p>
-          </div>
-          <div className="servings">
-            <box-icon name="bowl-hot" color="#888"></box-icon>
-            <p>{servings} Servings</p>
-          </div>
-        </div>
+        <RecipeStats readyTime={readyTime} servings={servings} />
       </div>
     </li>
   );
 }
 
-function RecipeDetails({ recipe }) {
-  const [ingredients, setIngredients] = useState([]);
-  const [steps, setSteps] = useState([]);
-
-  const { title, id, author, image } = recipe;
-
-  useEffect(
-    function () {
-      async function fetchIngredients() {
-        if (!id) return;
-        const res = await fetch(
-          `https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`
-        );
-        const data = await res.json();
-        const ingredients = data.extendedIngredients.map(
-          (ingredient) => ingredient.original
-        );
-        setIngredients(ingredients);
-      }
-      fetchIngredients();
-    },
-    [id]
+function RecipeStats({ readyTime, servings }) {
+  return (
+    <div className="recipe-stats text-center mt-auto d-flex justify-content-around">
+      <div className="ready-time">
+        <box-icon name="time-five" color="#888"></box-icon>
+        <p>{readyTime} Minutes</p>
+      </div>
+      <div className="servings">
+        <box-icon name="bowl-hot" color="#888"></box-icon>
+        <p>{servings} Servings</p>
+      </div>
+    </div>
   );
+}
 
-  useEffect(
-    function () {
-      async function fetchSteps() {
-        if (!id) return;
-        const res = await fetch(
-          `https://api.spoonacular.com/recipes/${id}/analyzedInstructions?apiKey=${API_KEY}`
-        );
-        const [data] = await res.json();
-        const steps = data.steps.map((step) => step.step);
-        setSteps(steps);
-      }
-      fetchSteps();
-    },
-    [id]
-  );
+function RecipeDetails({ recipe, ingredients, steps }) {
+  const { title, author, image, readyTime, servings } = recipe;
 
   return (
     <Card style={{ height: '90vh' }} className="overflow-auto">
-      <Card.Title>{title}</Card.Title>
-      <Card.Subtitle>{author}</Card.Subtitle>
+      <div className="d-flex border-bottom border-3">
+        <img src={image} alt={title} />
+        <div>
+          <Card.Title>{title}</Card.Title>
+          <Card.Subtitle className="pb-4">{author}</Card.Subtitle>
+          <RecipeStats readyTime={readyTime} servings={servings} />
+        </div>
+      </div>
       <Card.Body>
         <h5>Ingredients</h5>
         <ul>
-          {ingredients.map((ingredient) => (
-            <li>{ingredient}</li>
+          {ingredients.map((ingredient, i) => (
+            <li key={`ingredient${i}`}>{ingredient}</li>
           ))}
         </ul>
         <h5>Instructions</h5>
         <ol>
-          {steps.map((step) => (
-            <li>{step}</li>
+          {steps.map((step, i) => (
+            <li key={`step${i}`}>{step}</li>
           ))}
         </ol>
       </Card.Body>
