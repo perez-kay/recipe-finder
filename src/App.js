@@ -8,14 +8,15 @@ import Navbar from 'react-bootstrap/Navbar';
 import Card from 'react-bootstrap/Card';
 import { useState } from 'react';
 
-// not secure!!
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 export default function App() {
   const [recipe, setRecipe] = useState(null);
   const [recipeList, setRecipeList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [isListLoading, setIsListLoading] = useState(false);
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+  const [listError, setListError] = useState('');
+  const [detailsError, setDetailsError] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [steps, setSteps] = useState([]);
 
@@ -41,7 +42,7 @@ export default function App() {
     e.preventDefault();
     (async function () {
       try {
-        setIsLoading(true);
+        setIsListLoading(true);
         const res = await fetch(
           `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
         );
@@ -56,9 +57,9 @@ export default function App() {
           );
         setRecipeList(filterResults(data.results));
       } catch (err) {
-        setError(err);
+        setListError(err);
       } finally {
-        setIsLoading(false);
+        setIsListLoading(false);
       }
     })();
     setRecipe(null);
@@ -66,48 +67,43 @@ export default function App() {
 
   function handleSetRecipe(recipe) {
     setRecipe(recipe);
-    async function fetchIngredients() {
+    async function fetchDetails() {
       try {
-        const res = await fetch(
+        setIsDetailsLoading(true);
+        const resIng = await fetch(
           `https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${API_KEY}`
         );
-        if (res.status === 402)
+        if (resIng.status === 402)
           throw new Error('API call limit exceeded. Come back tomorrow!');
-        if (!res.ok)
+        if (!resIng.ok)
           throw new Error(
             'Something went wrong when fetching the ingredients list.'
           );
-        const data = await res.json();
-        const ingredients = data.extendedIngredients.map(
+        const dataIng = await resIng.json();
+        const ingredients = dataIng.extendedIngredients.map(
           (ingredient) => ingredient.original
         );
-        console.log('ingredients fetched');
         setIngredients(ingredients);
-      } catch (err) {
-        setError(err);
-      }
-    }
-    fetchIngredients();
-    async function fetchSteps() {
-      try {
-        const res = await fetch(
+
+        const resSteps = await fetch(
           `https://api.spoonacular.com/recipes/${recipe.id}/analyzedInstructions?apiKey=${API_KEY}`
         );
-        if (res.status === 402)
+        if (resSteps.status === 402)
           throw new Error('API call limit exceeded. Come back tomorrow!');
-        if (!res.ok)
+        if (!resSteps.ok)
           throw new Error(
             'Something went wrong when fetching the instructions.'
           );
-        const [data] = await res.json();
-        const steps = data.steps.map((step) => step.step);
-        console.log('steps fetched');
+        const [dataSteps] = await resSteps.json();
+        const steps = dataSteps.steps.map((step) => step.step);
         setSteps(steps);
       } catch (err) {
-        setError(err);
+        setDetailsError(err);
+      } finally {
+        setIsDetailsLoading(false);
       }
     }
-    fetchSteps();
+    fetchDetails();
   }
 
   return (
@@ -116,8 +112,8 @@ export default function App() {
       <Container>
         <Row>
           <Col>
-            {isLoading && <Loader />}
-            {!isLoading && (
+            {isListLoading && <Loader />}
+            {!isListLoading && (
               <RecipeList
                 recipeList={recipeList}
                 onSelectRecipe={handleSetRecipe}
@@ -130,15 +126,11 @@ export default function App() {
                 recipe={recipe}
                 ingredients={ingredients}
                 steps={steps}
+                isLoading={isDetailsLoading}
               />
             )}
           </Col>
         </Row>
-        {/* ) : (
-          <h1 className="text-center mt-4">
-            Feeling hungry? Search for a tasty recipe!
-          </h1>
-        )} */}
       </Container>
     </div>
   );
@@ -270,7 +262,7 @@ function RecipeStats({ readyTime, servings }) {
   );
 }
 
-function RecipeDetails({ recipe, ingredients, steps }) {
+function RecipeDetails({ recipe, ingredients, steps, isLoading }) {
   const { title, author, image, readyTime, servings } = recipe;
 
   return (
@@ -283,20 +275,23 @@ function RecipeDetails({ recipe, ingredients, steps }) {
           <RecipeStats readyTime={readyTime} servings={servings} />
         </div>
       </div>
-      <Card.Body>
-        <h5>Ingredients</h5>
-        <ul>
-          {ingredients.map((ingredient, i) => (
-            <li key={`ingredient${i}`}>{ingredient}</li>
-          ))}
-        </ul>
-        <h5>Instructions</h5>
-        <ol>
-          {steps.map((step, i) => (
-            <li key={`step${i}`}>{step}</li>
-          ))}
-        </ol>
-      </Card.Body>
+      {isLoading && <Loader />}
+      {!isLoading && (
+        <Card.Body>
+          <h5>Ingredients</h5>
+          <ul>
+            {ingredients.map((ingredient, i) => (
+              <li key={`ingredient${i}`}>{ingredient}</li>
+            ))}
+          </ul>
+          <h5>Instructions</h5>
+          <ol>
+            {steps.map((step, i) => (
+              <li key={`step${i}`}>{step}</li>
+            ))}
+          </ol>
+        </Card.Body>
+      )}
     </Card>
   );
 }
