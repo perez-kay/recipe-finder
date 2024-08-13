@@ -1,74 +1,165 @@
 import './App.css';
 import 'boxicons';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Navbar from 'react-bootstrap/Navbar';
+import Card from 'react-bootstrap/Card';
+import { useState } from 'react';
 
-// not secure!!
 const API_KEY = process.env.REACT_APP_API_KEY;
 
-const tempData = [
-  {
-    title: 'How to Make the Cheesiest Bowtie Mac and Cheese',
-    id: 715595,
-    preperationMinutes: 15,
-    cookingMinutes: 20,
-    readyInMinutes: 35,
-    creditsText: 'pinkwhen.com',
-    servings: 4,
-    image: 'https://img.spoonacular.com/recipes/715595-312x231.jpg',
-  },
-  {
-    title: 'Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs',
-    id: 716429,
-    preperationMinutes: 20,
-    cookingMinutes: 25,
-    readyInMinutes: 45,
-    creditsText: 'Full Belly Sisters',
-    servings: 2,
-    image: 'https://img.spoonacular.com/recipes/716429-312x231.jpg',
-  },
-  {
-    title: 'Easy Cheesy Pizza Casserole',
-    id: 641893,
-    preperationMinutes: null,
-    cookingMinutes: null,
-    readyInMinutes: 45,
-    creditsText: 'foodista.com',
-    servings: 6,
-    image: 'https://img.spoonacular.com/recipes/641893-312x231.jpg',
-  },
-];
-
 export default function App() {
+  const [recipe, setRecipe] = useState(null);
+  const [recipeList, setRecipeList] = useState([]);
+  const [isListLoading, setIsListLoading] = useState(false);
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+  const [listError, setListError] = useState('');
+  const [detailsError, setDetailsError] = useState('');
+  const [ingredients, setIngredients] = useState([]);
+  const [steps, setSteps] = useState([]);
+
+  const [query, setQuery] = useState('');
+
+  function filterResults(results) {
+    return results.map((recipe) => {
+      const { title, id, creditsText, image, readyInMinutes, servings } =
+        recipe;
+      const filtered = {
+        title,
+        id,
+        creditsText,
+        image,
+        readyInMinutes,
+        servings,
+      };
+      return filtered;
+    });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    (async function () {
+      try {
+        setIsListLoading(true);
+        const res = await fetch(
+          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
+        );
+        if (res.status === 402)
+          throw new Error('API call limit exceeded. Come back tomorrow!');
+        if (!res.ok)
+          throw new Error('Something went wrong when fetching your recipes.');
+        const data = await res.json();
+        if (data.results.length === 0)
+          throw new Error(
+            'No recipes with that search term exist. Maybe you should create your own!'
+          );
+        setRecipeList(filterResults(data.results));
+      } catch (err) {
+        setListError(err);
+      } finally {
+        setIsListLoading(false);
+      }
+    })();
+    setRecipe(null);
+  }
+
+  function handleSetRecipe(recipe) {
+    setRecipe(recipe);
+    async function fetchDetails() {
+      try {
+        setIsDetailsLoading(true);
+        const resIng = await fetch(
+          `https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${API_KEY}`
+        );
+        if (resIng.status === 402)
+          throw new Error('API call limit exceeded. Come back tomorrow!');
+        if (!resIng.ok)
+          throw new Error(
+            'Something went wrong when fetching the ingredients list.'
+          );
+        const dataIng = await resIng.json();
+        const ingredients = dataIng.extendedIngredients.map(
+          (ingredient) => ingredient.original
+        );
+        setIngredients(ingredients);
+
+        const resSteps = await fetch(
+          `https://api.spoonacular.com/recipes/${recipe.id}/analyzedInstructions?apiKey=${API_KEY}`
+        );
+        if (resSteps.status === 402)
+          throw new Error('API call limit exceeded. Come back tomorrow!');
+        if (!resSteps.ok)
+          throw new Error(
+            'Something went wrong when fetching the instructions.'
+          );
+        const [dataSteps] = await resSteps.json();
+        const steps = dataSteps.steps.map((step) => step.step);
+        setSteps(steps);
+      } catch (err) {
+        setDetailsError(err);
+      } finally {
+        setIsDetailsLoading(false);
+      }
+    }
+    fetchDetails();
+  }
+
   return (
     <div>
-      <NavBar />
-      <main>
-        <RecipeList />
-      </main>
+      <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
+      <Container>
+        <Row>
+          <Col>
+            {isListLoading && <Loader />}
+            {!isListLoading && (
+              <RecipeList
+                recipeList={recipeList}
+                onSelectRecipe={handleSetRecipe}
+              />
+            )}
+          </Col>
+          <Col>
+            {recipe && (
+              <RecipeDetails
+                recipe={recipe}
+                ingredients={ingredients}
+                steps={steps}
+                isLoading={isDetailsLoading}
+              />
+            )}
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 }
 
-function NavBar() {
+function NavBar({ onSubmit, query, setQuery }) {
   return (
-    <nav>
-      <Title />
-      <SearchBar />
-      <Button>
-        <box-icon type="solid" name="fridge" color="white"></box-icon>
-      </Button>
-    </nav>
+    <Navbar>
+      <Container fluid>
+        <Navbar.Brand className="fw-bold">
+          <span>🍽️</span>FoodFinder
+        </Navbar.Brand>
+        <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
+        <Button>
+          <box-icon type="solid" name="fridge" color="white"></box-icon>
+        </Button>
+      </Container>
+    </Navbar>
   );
 }
 
-function Title() {
-  return <h1>Recipe Finder</h1>;
-}
-
-function SearchBar() {
+function SearchBar({ onSubmit, query, setQuery }) {
   return (
     <div>
-      <form className="search">
+      <form className="search" onSubmit={(e) => onSubmit(e)}>
         <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          name="search"
           className="search-bar"
           type="text"
           placeholder="Search for a recipe"
@@ -83,53 +174,124 @@ function SearchBar() {
 
 function Button({ extraClass, children, type }) {
   return (
-    <button className={`btn ${extraClass}`} type={type}>
+    <button className={`button ${extraClass}`} type={type}>
       {children}
     </button>
   );
 }
 
-function RecipeList() {
+function Loader() {
   return (
-    <div className="recipe-list">
-      {/* <h1>Found X Results for: [search term]</h1> */}
-      <ul>
-        {tempData.map((recipe) => (
-          <Recipe
-            title={recipe.title}
-            image={recipe.image}
-            author={recipe.creditsText}
-            servings={recipe.servings}
-            id={recipe.id}
-            readyTime={recipe.readyInMinutes}
-            key={recipe.id}
-          />
-        ))}
-      </ul>
+    <div
+      className="loader text-center d-flex flex-column justify-content-center"
+      style={{ height: '60vh' }}
+    >
+      <div className="loading-wheel align-self-center"></div>
+      <h3 className="pt-3" style={{ color: '#888' }}>
+        Loading
+      </h3>
     </div>
   );
 }
 
-function Recipe({ title, image, author, servings, id, readyTime }) {
+function RecipeList({ recipeList, onSelectRecipe }) {
   return (
-    <li className="recipe-card">
-      <div>
-        <img src={image} alt={`${title}`} />
-      </div>
-      <div className="recipe-info">
-        <h2>{title}</h2>
-        <p>Created by {author}</p>
-        <div className="recipe-stats">
-          <div className="servings">
-            <box-icon name="bowl-hot" color="#888"></box-icon>
-            <p>{servings} Servings</p>
-          </div>
-          <div className="ready-time">
-            <box-icon name="time-five" color="#888"></box-icon>
-            <p>{readyTime} Minutes</p>
-          </div>
-        </div>
+    <ul
+      className="list-unstyled overflow-auto border rounded"
+      style={{ height: '90vh' }}
+    >
+      {recipeList.map((recipe) => (
+        <Recipe
+          onSelectRecipe={onSelectRecipe}
+          title={recipe.title}
+          image={recipe.image}
+          author={recipe.creditsText}
+          servings={recipe.servings}
+          id={recipe.id}
+          readyTime={recipe.readyInMinutes}
+          key={recipe.id}
+        />
+      ))}
+    </ul>
+  );
+}
+
+function Recipe({
+  title,
+  image,
+  author,
+  servings,
+  id,
+  readyTime,
+  onSelectRecipe,
+}) {
+  return (
+    <li
+      className="recipe-list-item d-flex border-top border-bottom align-items-start"
+      onClick={() =>
+        onSelectRecipe({ title, image, author, id, readyTime, servings })
+      }
+    >
+      <img
+        className=""
+        src={image}
+        alt=""
+        style={{ height: '20%', width: '40%' }}
+      />
+      <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-3 pt-2">
+        <h4>{title}</h4>
+        <h6 className="text-muted pb-2">Created by {author}</h6>
+        <RecipeStats readyTime={readyTime} servings={servings} />
       </div>
     </li>
+  );
+}
+
+function RecipeStats({ readyTime, servings }) {
+  return (
+    <div className="recipe-stats text-center mt-auto d-flex justify-content-around">
+      <div className="ready-time">
+        <box-icon name="time-five" color="#888"></box-icon>
+        <p>{readyTime} Minutes</p>
+      </div>
+      <div className="servings">
+        <box-icon name="bowl-hot" color="#888"></box-icon>
+        <p>{servings} Servings</p>
+      </div>
+    </div>
+  );
+}
+
+function RecipeDetails({ recipe, ingredients, steps, isLoading }) {
+  const { title, author, image, readyTime, servings } = recipe;
+
+  return (
+    <Card style={{ height: '90vh' }} className="overflow-auto">
+      <div className="d-flex border-bottom border-3">
+        <img src={image} alt={title} />
+        <div>
+          <Card.Title>{title}</Card.Title>
+          <Card.Subtitle className="pb-4">{author}</Card.Subtitle>
+          <RecipeStats readyTime={readyTime} servings={servings} />
+        </div>
+      </div>
+      {isLoading && <Loader />}
+      {!isLoading && (
+        <Card.Body>
+          <h5>Ingredients</h5>
+          <ul>
+            {ingredients.map((ingredient, i) => (
+              <li key={`ingredient${i}`}>{ingredient}</li>
+            ))}
+          </ul>
+          <h5>Instructions</h5>
+          <ol>
+            {steps.map((step, i) => (
+              <li key={`step${i}`}>{step}</li>
+            ))}
+          </ol>
+        </Card.Body>
+      )}
+    </Card>
   );
 }
