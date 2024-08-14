@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Navbar from 'react-bootstrap/Navbar';
 import Card from 'react-bootstrap/Card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 console.log(API_KEY);
@@ -133,6 +133,7 @@ export default function App() {
                 ingredients={ingredients}
                 steps={steps}
                 isLoading={isDetailsLoading}
+                detailsError={detailsError}
               />
             )}
           </Col>
@@ -284,35 +285,61 @@ function RecipeStats({ readyTime, servings }) {
   );
 }
 
-function RecipeDetails({ recipe, ingredients, steps, isLoading }) {
+function RecipeDetails({
+  recipe,
+  ingredients,
+  steps,
+  isLoading,
+  detailsError,
+}) {
   const { title, author, image, readyTime, servings } = recipe;
+
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `FoodFinder | ${title}`;
+
+      return function () {
+        document.title = 'FoodFinder';
+      };
+    },
+    [title]
+  );
 
   return (
     <Card style={{ height: '90vh' }} className="overflow-auto">
-      <div className="d-flex border-bottom border-3">
-        <img src={image} alt={title} />
-        <div className="ps-2 pt-2">
-          <Card.Title>{title}</Card.Title>
-          <Card.Subtitle className="pb-4 text-muted">{author}</Card.Subtitle>
-          <RecipeStats readyTime={readyTime} servings={servings} />
-        </div>
-      </div>
-      {isLoading && <Loader />}
-      {!isLoading && (
-        <Card.Body>
-          <h5>Ingredients</h5>
-          <ul>
-            {ingredients.map((ingredient, i) => (
-              <li key={`ingredient${i}`}>{ingredient}</li>
-            ))}
-          </ul>
-          <h5>Instructions</h5>
-          <ol>
-            {steps.map((step, i) => (
-              <li key={`step${i}`}>{step}</li>
-            ))}
-          </ol>
-        </Card.Body>
+      {detailsError ? (
+        <ErrorMessage msg={detailsError} />
+      ) : (
+        <>
+          <div className="d-flex border-bottom border-3">
+            <img src={image} alt={title} />
+            <div className="ps-2 pt-2">
+              <Card.Title>{title}</Card.Title>
+              <Card.Subtitle className="pb-4 text-muted">
+                {author}
+              </Card.Subtitle>
+              <RecipeStats readyTime={readyTime} servings={servings} />
+            </div>
+          </div>
+          {isLoading && <Loader />}
+          {!isLoading && (
+            <Card.Body>
+              <h5>Ingredients</h5>
+              <ul>
+                {ingredients.map((ingredient, i) => (
+                  <li key={`ingredient${i}`}>{ingredient}</li>
+                ))}
+              </ul>
+              <h5>Instructions</h5>
+              <ol>
+                {steps.map((step, i) => (
+                  <li key={`step${i}`}>{step}</li>
+                ))}
+              </ol>
+            </Card.Body>
+          )}
+        </>
       )}
     </Card>
   );
