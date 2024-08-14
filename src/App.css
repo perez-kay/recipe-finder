@@ -36,9 +36,14 @@ body {
   width: 30rem;
   background-color: #eeee;
 }
+.recipe-list-item {
+  transition: all 0.3s;
+}
 
-/* .recipe-list-item:hover {
-} */
+.recipe-list-item:hover {
+  background-color: #eeee;
+  cursor: pointer;
+}
 
 .loading-wheel {
   width: 48px;
