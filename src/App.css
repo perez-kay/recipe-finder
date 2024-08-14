@@ -44,6 +44,21 @@ body {
   cursor: pointer;
 }
 
+/* style={{ width: '200px', height: '200px', objectFit: 'cover' }} */
+
+.recipe-img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+@media (max-width: 576px) {
+  .recipe-img {
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
 .loading-wheel {
   width: 48px;
   height: 48px;
