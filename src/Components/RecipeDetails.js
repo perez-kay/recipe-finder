@@ -27,10 +27,10 @@ export default function RecipeDetails({
 
   return (
     <Card style={{ height: '85vh' }} className="overflow-auto mt-3">
-      <div className="d-flex border-bottom border-3">
-        <img src={image} alt={title} style={{ width: '50%' }} />
-        <div className="ps-2 pt-2 w-100">
-          <Card.Title>{title}</Card.Title>
+      <div className="d-flex flex-column flex-sm-row border-bottom border-3">
+        <img className="recipe-details-img" src={image} alt={title} />
+        <div className=" px-2 px-sm-2 pt-3 pt-sm-2 w-100 text-center">
+          <Card.Title className="pb-2">{title}</Card.Title>
           <Card.Subtitle className="pb-4 text-muted">{author}</Card.Subtitle>
           <RecipeStats readyTime={readyTime} servings={servings} />
         </div>
