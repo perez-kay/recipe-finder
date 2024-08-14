@@ -44,16 +44,20 @@ body {
   cursor: pointer;
 }
 
-/* style={{ width: '200px', height: '200px', objectFit: 'cover' }} */
-
 .recipe-img {
   width: 200px;
   height: 200px;
   object-fit: cover;
 }
 
+.recipe-details-img {
+  width: 50%;
+  object-fit: cover;
+}
+
 @media (max-width: 576px) {
-  .recipe-img {
+  .recipe-img,
+  .recipe-details-img {
     width: 100%;
     object-fit: cover;
   }
