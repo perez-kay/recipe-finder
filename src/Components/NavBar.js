@@ -1,6 +1,6 @@
 import Button from './Button';
-import { Container } from 'react-bootstrap';
-import { Navbar } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
 
 export default function NavBar({ onSubmit, query, setQuery }) {
   return (
@@ -26,7 +26,7 @@ function SearchBar({ onSubmit, query, setQuery }) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="search-bar form-control px-2"
+            className="search-bar px-2"
             type="search"
             placeholder="Search for a recipe"
           />
