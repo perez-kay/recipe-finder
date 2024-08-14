@@ -32,7 +32,7 @@ export default function RecipeDetails({
       ) : (
         <>
           <div className="d-flex border-bottom border-3">
-            <img src={image} alt={title} />
+            <img src={image} alt={title} style={{ width: '50%' }} />
             <div className="ps-2 pt-2">
               <Card.Title>{title}</Card.Title>
               <Card.Subtitle className="pb-4 text-muted">

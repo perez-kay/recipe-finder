@@ -16,15 +16,17 @@ export default function Recipe({
         onSelectRecipe({ title, image, author, id, readyTime, servings })
       }
     >
-      <img
-        className=""
-        src={image}
-        alt={title}
-        style={{ height: '20%', width: '40%' }}
-      />
-      <div className="recipe-card-info d-flex w-100 flex-column justify-content-between ps-3 pt-2">
+      <div className="h-100">
+        <img
+          className="recipe-img"
+          src={image}
+          alt={title}
+          style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+        />
+      </div>
+      <div className="recipe-card-info d-flex w-100 flex-column justify-content-between px-3 pt-2">
         <h4>{title}</h4>
-        <h6 className="text-muted pb-2">Created by {author}</h6>
+        <p className="text-muted pb-2">Created by {author}</p>
         <RecipeStats readyTime={readyTime} servings={servings} />
       </div>
     </li>

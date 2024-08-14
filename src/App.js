@@ -113,9 +113,9 @@ export default function App() {
   return (
     <div>
       <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
-      <Container>
+      <Container fluid={'lg'}>
         <Row>
-          <Col>
+          <Col lg={6}>
             <LeftContainer>
               {isListLoading && <Loader />}
               {!isListLoading && !listError && (
@@ -127,7 +127,7 @@ export default function App() {
               {listError && <ErrorMessage msg={listError} />}
             </LeftContainer>
           </Col>
-          <Col>
+          <Col lg={6}>
             {recipe && (
               <RecipeDetails
                 recipe={recipe}
