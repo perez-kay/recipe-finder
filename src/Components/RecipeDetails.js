@@ -1,4 +1,4 @@
-import { Card } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
 import ErrorMessage from './ErrorMessage';
 import RecipeStats from './RecipeStats';
 import { useEffect } from 'react';
