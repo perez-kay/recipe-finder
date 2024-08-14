@@ -9,6 +9,7 @@ import Card from 'react-bootstrap/Card';
 import { useState } from 'react';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
+console.log(API_KEY);
 
 export default function App() {
   const [recipe, setRecipe] = useState(null);
@@ -42,6 +43,7 @@ export default function App() {
     e.preventDefault();
     (async function () {
       try {
+        setListError('');
         setIsListLoading(true);
         const res = await fetch(
           `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
@@ -57,7 +59,7 @@ export default function App() {
           );
         setRecipeList(filterResults(data.results));
       } catch (err) {
-        setListError(err);
+        setListError(err.message);
       } finally {
         setIsListLoading(false);
       }
@@ -69,6 +71,7 @@ export default function App() {
     setRecipe(recipe);
     async function fetchDetails() {
       try {
+        setDetailsError('');
         setIsDetailsLoading(true);
         const resIng = await fetch(
           `https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${API_KEY}`
@@ -98,7 +101,7 @@ export default function App() {
         const steps = dataSteps.steps.map((step) => step.step);
         setSteps(steps);
       } catch (err) {
-        setDetailsError(err);
+        setDetailsError(err.message);
       } finally {
         setIsDetailsLoading(false);
       }
@@ -112,13 +115,16 @@ export default function App() {
       <Container>
         <Row>
           <Col>
-            {isListLoading && <Loader />}
-            {!isListLoading && (
-              <RecipeList
-                recipeList={recipeList}
-                onSelectRecipe={handleSetRecipe}
-              />
-            )}
+            <LeftContainer>
+              {isListLoading && <Loader />}
+              {!isListLoading && !listError && (
+                <RecipeList
+                  recipeList={recipeList}
+                  onSelectRecipe={handleSetRecipe}
+                />
+              )}
+              {listError && <ErrorMessage msg={listError} />}
+            </LeftContainer>
           </Col>
           <Col>
             {recipe && (
@@ -194,12 +200,28 @@ function Loader() {
   );
 }
 
+function ErrorMessage({ msg }) {
+  return (
+    <div className="text-center pt-3">
+      <h2>
+        <span>⚠️ </span>Oh no!
+      </h2>
+      <p>{msg}</p>
+    </div>
+  );
+}
+
+function LeftContainer({ children }) {
+  return (
+    <div className="overflow-auto border rounded" style={{ height: '90vh' }}>
+      {children}
+    </div>
+  );
+}
+
 function RecipeList({ recipeList, onSelectRecipe }) {
   return (
-    <ul
-      className="list-unstyled overflow-auto border rounded"
-      style={{ height: '90vh' }}
-    >
+    <ul className="list-unstyled">
       {recipeList.map((recipe) => (
         <Recipe
           onSelectRecipe={onSelectRecipe}
@@ -227,7 +249,7 @@ function Recipe({
 }) {
   return (
     <li
-      className="recipe-list-item d-flex border-top border-bottom align-items-start"
+      className="recipe-list-item d-flex border-bottom border-2 align-items-start"
       onClick={() =>
         onSelectRecipe({ title, image, author, id, readyTime, servings })
       }
@@ -269,9 +291,9 @@ function RecipeDetails({ recipe, ingredients, steps, isLoading }) {
     <Card style={{ height: '90vh' }} className="overflow-auto">
       <div className="d-flex border-bottom border-3">
         <img src={image} alt={title} />
-        <div>
+        <div className="ps-2 pt-2">
           <Card.Title>{title}</Card.Title>
-          <Card.Subtitle className="pb-4">{author}</Card.Subtitle>
+          <Card.Subtitle className="pb-4 text-muted">{author}</Card.Subtitle>
           <RecipeStats readyTime={readyTime} servings={servings} />
         </div>
       </div>
