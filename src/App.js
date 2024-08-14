@@ -44,7 +44,7 @@ export default function App() {
       try {
         setIsListLoading(true);
         const res = await fetch(
-          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
+          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=2&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
         );
         if (res.status === 402)
           throw new Error('API call limit exceeded. Come back tomorrow!');
