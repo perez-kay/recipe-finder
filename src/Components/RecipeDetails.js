@@ -27,39 +27,32 @@ export default function RecipeDetails({
 
   return (
     <Card style={{ height: '85vh' }} className="overflow-auto mt-3">
-      {detailsError ? (
-        <ErrorMessage msg={detailsError} />
-      ) : (
-        <>
-          <div className="d-flex border-bottom border-3">
-            <img src={image} alt={title} style={{ width: '50%' }} />
-            <div className="ps-2 pt-2">
-              <Card.Title>{title}</Card.Title>
-              <Card.Subtitle className="pb-4 text-muted">
-                {author}
-              </Card.Subtitle>
-              <RecipeStats readyTime={readyTime} servings={servings} />
-            </div>
-          </div>
-          {isLoading && <Loader />}
-          {!isLoading && (
-            <Card.Body>
-              <h5>Ingredients</h5>
-              <ul>
-                {ingredients.map((ingredient, i) => (
-                  <li key={`ingredient${i}`}>{ingredient}</li>
-                ))}
-              </ul>
-              <h5>Instructions</h5>
-              <ol>
-                {steps.map((step, i) => (
-                  <li key={`step${i}`}>{step}</li>
-                ))}
-              </ol>
-            </Card.Body>
-          )}
-        </>
+      <div className="d-flex border-bottom border-3">
+        <img src={image} alt={title} style={{ width: '50%' }} />
+        <div className="ps-2 pt-2 w-100">
+          <Card.Title>{title}</Card.Title>
+          <Card.Subtitle className="pb-4 text-muted">{author}</Card.Subtitle>
+          <RecipeStats readyTime={readyTime} servings={servings} />
+        </div>
+      </div>
+      {isLoading && <Loader />}
+      {!isLoading && !detailsError && (
+        <Card.Body>
+          <h5>Ingredients</h5>
+          <ul>
+            {ingredients.map((ingredient, i) => (
+              <li key={`ingredient${i}`}>{ingredient}</li>
+            ))}
+          </ul>
+          <h5>Instructions</h5>
+          <ol>
+            {steps.map((step, i) => (
+              <li key={`step${i}`}>{step}</li>
+            ))}
+          </ol>
+        </Card.Body>
       )}
+      {detailsError && <ErrorMessage msg={detailsError} />}
     </Card>
   );
 }
