@@ -1,6 +1,6 @@
 export default function Button({ extraClass, children, type }) {
   return (
-    <button className={`button ${extraClass}`} type={type}>
+    <button className={`btn btn-success ${extraClass}`} type={type}>
       {children}
     </button>
   );

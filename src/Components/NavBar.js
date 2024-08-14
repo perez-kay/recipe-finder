@@ -22,17 +22,18 @@ function SearchBar({ onSubmit, query, setQuery }) {
   return (
     <div>
       <form className="search" onSubmit={(e) => onSubmit(e)}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          name="search"
-          className="search-bar"
-          type="text"
-          placeholder="Search for a recipe"
-        />
-        <Button extraClass="btn-search" type="submit">
-          Search
-        </Button>
+        <div className="input-group">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="search-bar form-control px-2"
+            type="search"
+            placeholder="Search for a recipe"
+          />
+          <Button extraClass="btn-search" type="submit">
+            Search
+          </Button>
+        </div>
       </form>
     </div>
   );

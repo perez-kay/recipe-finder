@@ -14,7 +14,7 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.button {
+/* .button {
   border: 0;
   padding: 0.5rem;
   border-radius: 0.7rem;
@@ -27,13 +27,12 @@ body {
   padding-left: 1rem;
   padding-right: 1rem;
   font-weight: bold;
-}
+} */
 
 .search-bar {
   border: none;
   padding: 0.5rem 0.6rem;
   border-radius: 0.7rem;
-  width: 30rem;
   background-color: #eeee;
 }
 .recipe-list-item {
