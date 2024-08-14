@@ -26,7 +26,7 @@ export default function RecipeDetails({
   );
 
   return (
-    <Card style={{ height: '90vh' }} className="overflow-auto">
+    <Card style={{ height: '85vh' }} className="overflow-auto mt-3">
       {detailsError ? (
         <ErrorMessage msg={detailsError} />
       ) : (
