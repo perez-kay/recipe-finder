@@ -15,6 +15,7 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 export default function App() {
   const [recipe, setRecipe] = useState(null);
   const [recipeList, setRecipeList] = useState([]);
+  const [showWelcome, setShowWelcome] = useState(true);
   const [isListLoading, setIsListLoading] = useState(false);
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const [listError, setListError] = useState('');
@@ -41,12 +42,14 @@ export default function App() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!query) return;
+    setShowWelcome(false);
     (async function () {
       try {
         setListError('');
         setIsListLoading(true);
         const res = await fetch(
-          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=5&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true`
+          `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=7&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true`
         );
         if (res.status === 402)
           throw new Error('API call limit exceeded. Come back tomorrow!');
@@ -113,31 +116,35 @@ export default function App() {
     <div>
       <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
       <Container fluid={'lg'}>
-        <Row>
-          <Col lg={6}>
-            <LeftContainer>
-              {isListLoading && <Loader />}
-              {!isListLoading && !listError && (
-                <RecipeList
-                  recipeList={recipeList}
-                  onSelectRecipe={handleSetRecipe}
+        {showWelcome ? (
+          <WelcomeMessage />
+        ) : (
+          <Row>
+            <Col lg={6}>
+              <LeftContainer>
+                {isListLoading && <Loader />}
+                {!isListLoading && !listError && (
+                  <RecipeList
+                    recipeList={recipeList}
+                    onSelectRecipe={handleSetRecipe}
+                  />
+                )}
+                {listError && <ErrorMessage msg={listError} />}
+              </LeftContainer>
+            </Col>
+            <Col lg={6}>
+              {recipe && (
+                <RecipeDetails
+                  recipe={recipe}
+                  ingredients={ingredients}
+                  steps={steps}
+                  isLoading={isDetailsLoading}
+                  detailsError={detailsError}
                 />
               )}
-              {listError && <ErrorMessage msg={listError} />}
-            </LeftContainer>
-          </Col>
-          <Col lg={6}>
-            {recipe && (
-              <RecipeDetails
-                recipe={recipe}
-                ingredients={ingredients}
-                steps={steps}
-                isLoading={isDetailsLoading}
-                detailsError={detailsError}
-              />
-            )}
-          </Col>
-        </Row>
+            </Col>
+          </Row>
+        )}
       </Container>
     </div>
   );
@@ -150,6 +157,16 @@ function LeftContainer({ children }) {
       style={{ height: '85vh' }}
     >
       {children}
+    </div>
+  );
+}
+
+function WelcomeMessage() {
+  return (
+    <div className="text-center">
+      <h1 className="my-3">Welcome to FoodFinder!</h1>
+      <h3 className="my-4 mx-2">Feeling hungry? Search for a recipe!</h3>
+      <h4>🍔 🥗 🍲 🍖 🍜 🍚 🌮 🍳</h4>
     </div>
   );
 }
