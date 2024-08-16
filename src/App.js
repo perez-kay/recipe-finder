@@ -115,7 +115,7 @@ export default function App() {
   return (
     <div>
       <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
-      <Container fluid={'lg'}>
+      <Container fluid="lg">
         {showWelcome ? (
           <WelcomeMessage />
         ) : (
