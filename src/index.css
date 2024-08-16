@@ -22,11 +22,7 @@ body {
 }
 
 .search-bar {
-  border: none;
-  padding: 0.5rem 0.6rem;
-  border-radius: 0.7rem;
   width: 30rem;
-  background-color: #eeee;
 }
 .recipe-list-item {
   transition: all 0.3s;
@@ -53,6 +49,16 @@ body {
   .recipe-details-img {
     width: 100%;
     object-fit: cover;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 577px) {
+  .search-bar {
+    width: 20rem;
   }
 }
 
