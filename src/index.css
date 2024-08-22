@@ -51,6 +51,24 @@ body {
   object-fit: cover;
 }
 
+@keyframes slideLeft {
+  0% {
+    transform: translate(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 992px) {
+  .recipe-details {
+    animation: slideLeft 0.5s ease-in-out;
+  }
+}
+
 @media (max-width: 576px) {
   .recipe-img,
   .recipe-details-img {

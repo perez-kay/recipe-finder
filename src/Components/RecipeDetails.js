@@ -29,7 +29,7 @@ export default function RecipeDetails({
   return (
     <Card
       style={{ height: '85vh' }}
-      className="overflow-auto mt-3 position-relative"
+      className="overflow-auto mt-3 position-relative recipe-details"
     >
       <button
         className="d-inline-block d-lg-none btn btn-success btn-back mt-1 ms-1 d-flex jusitfy-content-center"
