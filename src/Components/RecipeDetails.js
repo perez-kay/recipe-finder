@@ -12,7 +12,10 @@ export default function RecipeDetails({
   detailsError,
   onHideDetails,
 }) {
-  const { title, author, image, readyTime, servings } = recipe;
+  const { id, title, author, image, readyTime, servings } = recipe;
+
+  // = bookmarked.filter(bookmarked=> bookmarked.id === id).length > 0;
+  const isBookmarked = false;
 
   useEffect(
     function () {
@@ -31,17 +34,26 @@ export default function RecipeDetails({
       style={{ height: '85vh' }}
       className="overflow-auto mt-3 position-relative recipe-details"
     >
-      <button
-        className="d-inline-block d-lg-none btn btn-success btn-back mt-1 ms-1 d-flex jusitfy-content-center"
-        onClick={onHideDetails}
-      >
-        <box-icon type="solid" name="chevron-left" color="white"></box-icon>
-      </button>
+      <div className="d-flex justify-content-between">
+        <button
+          className="d-inline-block d-lg-none details-btn-left btn btn-success mt-1 ms-1 d-flex jusitfy-content-center"
+          onClick={onHideDetails}
+        >
+          <box-icon type="solid" name="chevron-left" color="white"></box-icon>
+        </button>
+        <button className="btn btn-success details-btn-right mt-1 me-1 d-flex jusitfy-content-center">
+          <box-icon
+            name="bookmark"
+            type={isBookmarked ? 'solid' : 'regular'}
+            color="white"
+          ></box-icon>
+        </button>
+      </div>
       <div className="d-flex flex-column flex-sm-row border-bottom border-3">
         <img className="recipe-details-img" src={image} alt={title} />
         <div className=" px-2 px-sm-2 pt-3 pt-sm-2 w-100 text-center">
-          <Card.Title className="pb-2">{title}</Card.Title>
-          <Card.Subtitle className="pb-4 text-muted">{author}</Card.Subtitle>
+          <Card.Title className="pb-2 mt-4 fs-4">{title}</Card.Title>
+          <Card.Subtitle className="pb-5 text-muted">{author}</Card.Subtitle>
           <RecipeStats readyTime={readyTime} servings={servings} />
         </div>
       </div>

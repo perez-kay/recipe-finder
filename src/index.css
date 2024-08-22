@@ -21,11 +21,19 @@ body {
   font-weight: bold;
 }
 
-.btn-back {
+.details-btn-left,
+.details-btn-right {
   position: absolute;
   z-index: 99;
   top: 0;
+}
+
+.details-btn-left {
   left: 0;
+}
+
+.details-btn-right {
+  right: 0;
 }
 
 .search-bar {
