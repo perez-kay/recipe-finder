@@ -12,6 +12,21 @@ import { useState } from 'react';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
+function filterResults(results) {
+  return results.map((recipe) => {
+    const { title, id, creditsText, image, readyInMinutes, servings } = recipe;
+    const filtered = {
+      title,
+      id,
+      creditsText,
+      image,
+      readyInMinutes,
+      servings,
+    };
+    return filtered;
+  });
+}
+
 export default function App() {
   const [recipe, setRecipe] = useState(null);
   const [recipeList, setRecipeList] = useState([]);
@@ -23,22 +38,7 @@ export default function App() {
   const [ingredients, setIngredients] = useState([]);
   const [steps, setSteps] = useState([]);
   const [query, setQuery] = useState('');
-
-  function filterResults(results) {
-    return results.map((recipe) => {
-      const { title, id, creditsText, image, readyInMinutes, servings } =
-        recipe;
-      const filtered = {
-        title,
-        id,
-        creditsText,
-        image,
-        readyInMinutes,
-        servings,
-      };
-      return filtered;
-    });
-  }
+  const [showDetails, setShowDetails] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -72,6 +72,7 @@ export default function App() {
 
   function handleSetRecipe(recipe) {
     setRecipe(recipe);
+    setShowDetails(true);
     async function fetchDetails() {
       try {
         setDetailsError('');
@@ -112,6 +113,10 @@ export default function App() {
     fetchDetails();
   }
 
+  function handleHideDetails() {
+    setShowDetails(false);
+  }
+
   return (
     <div>
       <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
@@ -120,7 +125,7 @@ export default function App() {
           <WelcomeMessage />
         ) : (
           <Row>
-            <Col lg={6}>
+            <Col lg={6} className={showDetails && 'd-none d-lg-block'}>
               <LeftContainer>
                 {isListLoading && <Loader />}
                 {!isListLoading && !listError && (
@@ -133,13 +138,14 @@ export default function App() {
               </LeftContainer>
             </Col>
             <Col lg={6}>
-              {recipe && (
+              {showDetails && (
                 <RecipeDetails
                   recipe={recipe}
                   ingredients={ingredients}
                   steps={steps}
                   isLoading={isDetailsLoading}
                   detailsError={detailsError}
+                  onHideDetails={handleHideDetails}
                 />
               )}
             </Col>

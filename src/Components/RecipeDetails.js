@@ -10,6 +10,7 @@ export default function RecipeDetails({
   steps,
   isLoading,
   detailsError,
+  onHideDetails,
 }) {
   const { title, author, image, readyTime, servings } = recipe;
 
@@ -26,7 +27,16 @@ export default function RecipeDetails({
   );
 
   return (
-    <Card style={{ height: '85vh' }} className="overflow-auto mt-3">
+    <Card
+      style={{ height: '85vh' }}
+      className="overflow-auto mt-3 position-relative"
+    >
+      <button
+        className="d-inline-block d-lg-none btn btn-success btn-back mt-1 ms-1 d-flex jusitfy-content-center"
+        onClick={onHideDetails}
+      >
+        <box-icon type="solid" name="chevron-left" color="white"></box-icon>
+      </button>
       <div className="d-flex flex-column flex-sm-row border-bottom border-3">
         <img className="recipe-details-img" src={image} alt={title} />
         <div className=" px-2 px-sm-2 pt-3 pt-sm-2 w-100 text-center">

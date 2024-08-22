@@ -21,6 +21,13 @@ body {
   font-weight: bold;
 }
 
+.btn-back {
+  position: absolute;
+  z-index: 99;
+  top: 0;
+  left: 0;
+}
+
 .search-bar {
   width: 30rem;
 }
