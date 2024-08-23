@@ -39,11 +39,20 @@ export default function App() {
   const [steps, setSteps] = useState([]);
   const [query, setQuery] = useState('');
   const [showDetails, setShowDetails] = useState(false);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [showBookmarks, setShowBookmarks] = useState(false);
+
+  function handleAddBookmark(recipe, ingredients, steps) {
+    const newBookmark = { recipe, ingredients, steps };
+    setBookmarks((bookmarked) => [...bookmarked, newBookmark]);
+    // TODO: Remove a bookmarked recipe by clicking button again
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!query) return;
     setShowWelcome(false);
+    setShowBookmarks(false);
     (async function () {
       try {
         setListError('');
@@ -113,6 +122,12 @@ export default function App() {
     fetchDetails();
   }
 
+  function handleShowBookmarkedRecipe(bookmark) {
+    setRecipe(bookmark.recipe);
+    setIngredients(bookmark.ingredients);
+    setSteps(bookmark.steps);
+  }
+
   function handleHideDetails() {
     setShowDetails(false);
   }
@@ -128,12 +143,38 @@ export default function App() {
             <Col lg={6} className={showDetails && 'd-none d-lg-block'}>
               <LeftContainer>
                 {isListLoading && <Loader />}
-                {!isListLoading && !listError && (
-                  <RecipeList
-                    recipeList={recipeList}
-                    onSelectRecipe={handleSetRecipe}
-                  />
+                {!isListLoading && !listError && showBookmarks ? (
+                  <RecipeList>
+                    {bookmarks.map(({ recipe }) => (
+                      <Recipe
+                        onSelectRecipe={handleSetRecipe}
+                        title={recipe.title}
+                        image={recipe.image}
+                        author={recipe.author}
+                        servings={recipe.servings}
+                        id={recipe.id}
+                        readyTime={recipe.readyTime}
+                        key={recipe.id}
+                      />
+                    ))}
+                  </RecipeList>
+                ) : (
+                  <RecipeList>
+                    {recipeList.map((recipe) => (
+                      <Recipe
+                        onSelectRecipe={handleSetRecipe}
+                        title={recipe.title}
+                        image={recipe.image}
+                        author={recipe.creditsText}
+                        servings={recipe.servings}
+                        id={recipe.id}
+                        readyTime={recipe.readyInMinutes}
+                        key={recipe.id}
+                      />
+                    ))}
+                  </RecipeList>
                 )}
+
                 {listError && <ErrorMessage msg={listError} />}
               </LeftContainer>
             </Col>
@@ -146,6 +187,8 @@ export default function App() {
                   isLoading={isDetailsLoading}
                   detailsError={detailsError}
                   onHideDetails={handleHideDetails}
+                  onAddBookmark={handleAddBookmark}
+                  bookmarks={bookmarks}
                 />
               )}
             </Col>
@@ -177,21 +220,6 @@ function WelcomeMessage() {
   );
 }
 
-function RecipeList({ recipeList, onSelectRecipe }) {
-  return (
-    <ul className="list-unstyled">
-      {recipeList.map((recipe) => (
-        <Recipe
-          onSelectRecipe={onSelectRecipe}
-          title={recipe.title}
-          image={recipe.image}
-          author={recipe.creditsText}
-          servings={recipe.servings}
-          id={recipe.id}
-          readyTime={recipe.readyInMinutes}
-          key={recipe.id}
-        />
-      ))}
-    </ul>
-  );
+function RecipeList({ children }) {
+  return <ul className="list-unstyled">{children}</ul>;
 }

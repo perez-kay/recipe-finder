@@ -11,11 +11,14 @@ export default function RecipeDetails({
   isLoading,
   detailsError,
   onHideDetails,
+  onAddBookmark,
+  bookmarks,
 }) {
   const { id, title, author, image, readyTime, servings } = recipe;
 
   // = bookmarked.filter(bookmarked=> bookmarked.id === id).length > 0;
-  const isBookmarked = false;
+  const isBookmarked =
+    bookmarks.filter((bookmark) => bookmark.recipe.id === id).length > 0;
 
   useEffect(
     function () {
@@ -41,7 +44,16 @@ export default function RecipeDetails({
         >
           <box-icon type="solid" name="chevron-left" color="white"></box-icon>
         </button>
-        <button className="btn btn-success details-btn-right mt-1 me-1 d-flex jusitfy-content-center">
+        <button
+          className="btn btn-success details-btn-right mt-1 me-1 d-flex jusitfy-content-center"
+          onClick={() =>
+            onAddBookmark(
+              { id, title, author, image, readyTime, servings },
+              ingredients,
+              steps
+            )
+          }
+        >
           <box-icon
             name="bookmark"
             type={isBookmarked ? 'solid' : 'regular'}
