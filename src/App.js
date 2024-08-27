@@ -44,8 +44,19 @@ export default function App() {
 
   function handleAddBookmark(recipe, ingredients, steps) {
     const newBookmark = { recipe, ingredients, steps };
-    setBookmarks((bookmarked) => [...bookmarked, newBookmark]);
-    // TODO: Remove a bookmarked recipe by clicking button again
+    const containsBookmark =
+      bookmarks.filter(
+        (bookmark) => bookmark.recipe.id === newBookmark.recipe.id
+      ).length > 0;
+    if (containsBookmark) {
+      setBookmarks((bookmarks) =>
+        bookmarks.filter(
+          (bookmark) => bookmark.recipe.id !== newBookmark.recipe.id
+        )
+      );
+    } else {
+      setBookmarks((bookmark) => [...bookmark, newBookmark]);
+    }
   }
 
   function handleSubmit(e) {
