@@ -1,6 +1,10 @@
-export default function Button({ extraClass, children, type }) {
+export default function Button({ extraClass, children, type, onClick }) {
   return (
-    <button className={`btn btn-success ${extraClass}`} type={type}>
+    <button
+      onClick={onClick}
+      className={`btn btn-success ${extraClass}`}
+      type={type}
+    >
       {children}
     </button>
   );
