@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
-:root {
-  --green: #62a14f;
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -91,7 +87,7 @@ body {
 
 @media (max-width: 768px) and (min-width: 577px) {
   .search-bar {
-    width: 20rem;
+    width: 15rem;
   }
 }
 
