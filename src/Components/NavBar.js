@@ -2,7 +2,7 @@ import Button from './Button';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 
-export default function NavBar({ onSubmit, query, setQuery }) {
+export default function NavBar({ onSubmit, query, setQuery, onShowBookmarks }) {
   return (
     <Navbar className="bg-secondary-subtle m-2 rounded py-3">
       <Container fluid>
@@ -11,10 +11,10 @@ export default function NavBar({ onSubmit, query, setQuery }) {
           <span className="d-none d-sm-inline">FoodFinder</span>
         </Navbar.Brand>
         <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
-        {/* <Button>
-          <box-icon type="solid" name="fridge" color="white"></box-icon>
-        </Button> */}
-        <span>&nbsp;</span>
+        <Button onClick={() => onShowBookmarks(true)}>
+          <box-icon name="bookmarks" color="white"></box-icon>
+        </Button>
+        {/* <span>&nbsp;</span> */}
       </Container>
     </Navbar>
   );

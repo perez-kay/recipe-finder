@@ -63,11 +63,12 @@ export default function App() {
     e.preventDefault();
     if (!query) return;
     setShowWelcome(false);
+    setShowDetails(false);
     setShowBookmarks(false);
+    setIsListLoading(true);
     (async function () {
       try {
         setListError('');
-        setIsListLoading(true);
         const res = await fetch(
           `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=7&apiKey=${API_KEY}&addRecipeInformation=true&instructionsRequired=true`
         );
@@ -145,7 +146,12 @@ export default function App() {
 
   return (
     <div>
-      <NavBar onSubmit={handleSubmit} query={query} setQuery={setQuery} />
+      <NavBar
+        onSubmit={handleSubmit}
+        query={query}
+        setQuery={setQuery}
+        onShowBookmarks={setShowBookmarks}
+      />
       <Container fluid="lg">
         {showWelcome ? (
           <WelcomeMessage />
@@ -154,22 +160,28 @@ export default function App() {
             <Col lg={6} className={showDetails && 'd-none d-lg-block'}>
               <LeftContainer>
                 {isListLoading && <Loader />}
-                {!isListLoading && !listError && showBookmarks ? (
+                {!isListLoading && !listError && showBookmarks && (
                   <RecipeList>
-                    {bookmarks.map(({ recipe }) => (
+                    {bookmarks.length === 0 && (
+                      <h1 className="text-center mt-3">No bookmarks</h1>
+                    )}
+                    {bookmarks.map((bookmark) => (
                       <Recipe
-                        onSelectRecipe={handleSetRecipe}
-                        title={recipe.title}
-                        image={recipe.image}
-                        author={recipe.author}
-                        servings={recipe.servings}
-                        id={recipe.id}
-                        readyTime={recipe.readyTime}
-                        key={recipe.id}
+                        onSelectRecipe={() =>
+                          handleShowBookmarkedRecipe(bookmark)
+                        }
+                        title={bookmark.recipe.title}
+                        image={bookmark.recipe.image}
+                        author={bookmark.recipe.author}
+                        servings={bookmark.recipe.servings}
+                        id={bookmark.recipe.id}
+                        readyTime={bookmark.recipe.readyTime}
+                        key={bookmark.recipe.id}
                       />
                     ))}
                   </RecipeList>
-                ) : (
+                )}
+                {!isListLoading && !listError && !showBookmarks && (
                   <RecipeList>
                     {recipeList.map((recipe) => (
                       <Recipe
