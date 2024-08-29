@@ -144,13 +144,18 @@ export default function App() {
     setShowDetails(false);
   }
 
+  function handleShowBookmarks() {
+    setShowBookmarks(true);
+    setShowWelcome(false);
+  }
+
   return (
     <div>
       <NavBar
         onSubmit={handleSubmit}
         query={query}
         setQuery={setQuery}
-        onShowBookmarks={setShowBookmarks}
+        onShowBookmarks={handleShowBookmarks}
       />
       <Container fluid="lg">
         {showWelcome ? (
