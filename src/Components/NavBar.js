@@ -11,7 +11,7 @@ export default function NavBar({ onSubmit, query, setQuery, onShowBookmarks }) {
           <span className="d-none d-sm-inline">FoodFinder</span>
         </Navbar.Brand>
         <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
-        <Button onClick={() => onShowBookmarks(true)}>
+        <Button onClick={onShowBookmarks}>
           <box-icon name="bookmarks" color="white"></box-icon>
         </Button>
         {/* <span>&nbsp;</span> */}

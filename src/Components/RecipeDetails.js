@@ -39,13 +39,13 @@ export default function RecipeDetails({
     >
       <div className="d-flex justify-content-between">
         <button
-          className="d-inline-block d-lg-none details-btn-left btn btn-success mt-1 ms-1 d-flex jusitfy-content-center"
+          className="d-inline-block d-lg-none details-btn-left btn btn-success mt-1 ms-1 d-flex jusitfy-content-center px-2"
           onClick={onHideDetails}
         >
           <box-icon type="solid" name="chevron-left" color="white"></box-icon>
         </button>
         <button
-          className="btn btn-success details-btn-right mt-1 me-1 d-flex jusitfy-content-center"
+          className="btn btn-success details-btn-right mt-1 me-1 px-2 d-flex jusitfy-content-center"
           onClick={() =>
             onAddBookmark(
               { id, title, author, image, readyTime, servings },
