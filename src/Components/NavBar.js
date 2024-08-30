@@ -14,7 +14,6 @@ export default function NavBar({ onSubmit, query, setQuery, onShowBookmarks }) {
         <Button onClick={onShowBookmarks}>
           <box-icon name="bookmarks" color="white"></box-icon>
         </Button>
-        {/* <span>&nbsp;</span> */}
       </Container>
     </Navbar>
   );
