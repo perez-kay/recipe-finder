@@ -175,12 +175,7 @@ export default function App() {
                         onSelectRecipe={() =>
                           handleShowBookmarkedRecipe(bookmark)
                         }
-                        title={bookmark.recipe.title}
-                        image={bookmark.recipe.image}
-                        author={bookmark.recipe.author}
-                        servings={bookmark.recipe.servings}
-                        id={bookmark.recipe.id}
-                        readyTime={bookmark.recipe.readyTime}
+                        recipe={bookmark}
                         key={bookmark.recipe.id}
                       />
                     ))}
@@ -191,12 +186,7 @@ export default function App() {
                     {recipeList.map((recipe) => (
                       <Recipe
                         onSelectRecipe={handleSetRecipe}
-                        title={recipe.title}
-                        image={recipe.image}
-                        author={recipe.creditsText}
-                        servings={recipe.servings}
-                        id={recipe.id}
-                        readyTime={recipe.readyInMinutes}
+                        recipe={recipe}
                         key={recipe.id}
                       />
                     ))}

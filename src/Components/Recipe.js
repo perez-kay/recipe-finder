@@ -1,14 +1,14 @@
 import RecipeStats from './RecipeStats';
 
-export default function Recipe({
-  title,
-  image,
-  author,
-  servings,
-  id,
-  readyTime,
-  onSelectRecipe,
-}) {
+export default function Recipe({ recipe, onSelectRecipe }) {
+  const {
+    title,
+    image,
+    creditsText: author,
+    servings,
+    id,
+    readyInMinutes: readyTime,
+  } = recipe;
   return (
     <li
       className="recipe-list-item d-flex flex-sm-row flex-column border-bottom border-2 text-center text-sm-start w-100"
