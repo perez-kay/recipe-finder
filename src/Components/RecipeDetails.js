@@ -16,7 +16,6 @@ export default function RecipeDetails({
 }) {
   const { id, title, author, image, readyTime, servings } = recipe;
 
-  // = bookmarked.filter(bookmarked=> bookmarked.id === id).length > 0;
   const isBookmarked =
     bookmarks.filter((bookmark) => bookmark.recipe.id === id).length > 0;
 

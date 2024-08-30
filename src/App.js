@@ -8,6 +8,8 @@ import Loader from './Components/Loader';
 import RecipeDetails from './Components/RecipeDetails.js';
 import ErrorMessage from './Components/ErrorMessage';
 import Recipe from './Components/Recipe';
+import LeftContainer from './Components/LeftContainer.js';
+import WelcomeMessage from './Components/WelcomeMessage.js';
 import { useState } from 'react';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
@@ -166,7 +168,7 @@ export default function App() {
               <LeftContainer>
                 {isListLoading && <Loader />}
                 {!isListLoading && !listError && showBookmarks && (
-                  <RecipeList>
+                  <>
                     {bookmarks.length === 0 && (
                       <h1 className="text-center mt-3">No bookmarks</h1>
                     )}
@@ -175,14 +177,14 @@ export default function App() {
                         onSelectRecipe={() =>
                           handleShowBookmarkedRecipe(bookmark)
                         }
-                        recipe={bookmark}
+                        recipe={bookmark.recipe}
                         key={bookmark.recipe.id}
                       />
                     ))}
-                  </RecipeList>
+                  </>
                 )}
                 {!isListLoading && !listError && !showBookmarks && (
-                  <RecipeList>
+                  <>
                     {recipeList.map((recipe) => (
                       <Recipe
                         onSelectRecipe={handleSetRecipe}
@@ -190,7 +192,7 @@ export default function App() {
                         key={recipe.id}
                       />
                     ))}
-                  </RecipeList>
+                  </>
                 )}
 
                 {listError && <ErrorMessage msg={listError} />}
@@ -215,29 +217,4 @@ export default function App() {
       </Container>
     </div>
   );
-}
-
-function LeftContainer({ children }) {
-  return (
-    <div
-      className="overflow-auto border rounded mt-3"
-      style={{ height: '85vh' }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function WelcomeMessage() {
-  return (
-    <div className="text-center">
-      <h1 className="my-3">Welcome to FoodFinder!</h1>
-      <h3 className="my-4 mx-2">Feeling hungry? Search for a recipe!</h3>
-      <h4>🍔 🥗 🍲 🍖 🍜 🍚 🌮 🍳</h4>
-    </div>
-  );
-}
-
-function RecipeList({ children }) {
-  return <ul className="list-unstyled">{children}</ul>;
 }
