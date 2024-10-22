@@ -1,5 +1,6 @@
 import Card from 'react-bootstrap/Card';
 import ErrorMessage from './ErrorMessage';
+import Button from './Button';
 import RecipeStats from './RecipeStats';
 import { useEffect } from 'react';
 import Loader from './Loader';
@@ -14,7 +15,7 @@ export default function RecipeDetails({
   onAddBookmark,
   bookmarks,
 }) {
-  const { id, title, author, image, readyTime, servings } = recipe;
+  const { id, title, author, image, readyInMinutes, servings } = recipe;
 
   const isBookmarked =
     bookmarks.filter((bookmark) => bookmark.recipe.id === id).length > 0;
@@ -37,35 +38,35 @@ export default function RecipeDetails({
       className="overflow-auto mt-3 position-relative recipe-details"
     >
       <div className="d-flex justify-content-between">
-        <button
-          className="d-inline-block d-lg-none details-btn-left btn btn-success mt-1 ms-1 d-flex jusitfy-content-center px-2"
+        <Button
+          extraClass="d-inline-block d-lg-none details-btn-left mt-1 ms-1 d-flex "
           onClick={onHideDetails}
         >
-          <box-icon type="solid" name="chevron-left" color="white"></box-icon>
-        </button>
-        <button
-          className="btn btn-success details-btn-right mt-1 me-1 px-2 d-flex jusitfy-content-center"
+          <i className="bi bi-arrow-left"></i>
+        </Button>
+        <Button
+          extraClass="details-btn-right mt-1 me-1"
           onClick={() =>
             onAddBookmark(
-              { id, title, author, image, readyTime, servings },
+              { id, title, author, image, readyInMinutes, servings },
               ingredients,
               steps
             )
           }
         >
-          <box-icon
-            name="bookmark"
-            type={isBookmarked ? 'solid' : 'regular'}
-            color="white"
-          ></box-icon>
-        </button>
+          <i
+            className={`bi ${
+              isBookmarked ? 'bi-bookmark-x-fill' : 'bi-bookmark-plus'
+            }`}
+          ></i>
+        </Button>
       </div>
       <div className="d-flex flex-column flex-sm-row border-bottom border-3">
         <img className="recipe-details-img" src={image} alt={title} />
         <div className=" px-2 px-sm-2 pt-3 pt-sm-2 w-100 text-center">
           <Card.Title className="pb-2 mt-4 fs-4">{title}</Card.Title>
           <Card.Subtitle className="pb-5 text-muted">{author}</Card.Subtitle>
-          <RecipeStats readyTime={readyTime} servings={servings} />
+          <RecipeStats readyTime={readyInMinutes} servings={servings} />
         </div>
       </div>
       {isLoading && <Loader />}

@@ -12,7 +12,7 @@ export default function NavBar({ onSubmit, query, setQuery, onShowBookmarks }) {
         </Navbar.Brand>
         <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
         <Button onClick={onShowBookmarks}>
-          <box-icon name="bookmarks" color="white"></box-icon>
+          <i class="bi bi-bookmarks-fill"></i>
         </Button>
       </Container>
     </Navbar>
@@ -31,10 +31,10 @@ function SearchBar({ onSubmit, query, setQuery }) {
             type="text"
             placeholder="Search for a recipe"
           />
-          <Button type="submit">
+          <Button type="submit" extraClass="me-1">
             <span className="d-none d-sm-inline">Search</span>
             <span className="d-flex align-self-center d-sm-none">
-              <box-icon name="search" color="white"></box-icon>
+              <i className="bi bi-search"></i>
             </span>
           </Button>
         </div>
