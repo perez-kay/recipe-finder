@@ -12,7 +12,7 @@ export default function NavBar({ onSubmit, query, setQuery, onShowBookmarks }) {
         </Navbar.Brand>
         <SearchBar onSubmit={onSubmit} query={query} setQuery={setQuery} />
         <Button onClick={onShowBookmarks}>
-          <i class="bi bi-bookmarks-fill"></i>
+          <i className="bi bi-bookmarks-fill"></i>
         </Button>
       </Container>
     </Navbar>
