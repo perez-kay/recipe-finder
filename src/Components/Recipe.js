@@ -1,13 +1,11 @@
 import RecipeStats from './RecipeStats';
 
 export default function Recipe({ recipe, onSelectRecipe }) {
-  const { title, image, author, servings, id, readyInMinutes } = recipe;
+  const { title, image, author, servings, readyInMinutes } = recipe;
   return (
     <li
       className="recipe-list-item d-flex flex-sm-row flex-column border-bottom border-2 text-center text-sm-start w-100"
-      onClick={() =>
-        onSelectRecipe({ title, image, author, id, readyInMinutes, servings })
-      }
+      onClick={() => onSelectRecipe(recipe)}
     >
       <img className="recipe-img" src={image} alt={title} />
       <div className="recipe-card-info d-flex w-100 flex-column justify-content-between px-3 pt-3 pt-sm-2">

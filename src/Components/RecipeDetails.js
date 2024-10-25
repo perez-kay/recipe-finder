@@ -46,13 +46,7 @@ export default function RecipeDetails({
         </Button>
         <Button
           extraClass="details-btn-right mt-1 me-1"
-          onClick={() =>
-            onAddBookmark(
-              { id, title, author, image, readyInMinutes, servings },
-              ingredients,
-              steps
-            )
-          }
+          onClick={() => onAddBookmark(recipe, ingredients, steps)}
         >
           <i
             className={`bi ${
