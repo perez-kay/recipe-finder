@@ -66,7 +66,7 @@ export default function RecipeDetails({
         <div className=" px-2 px-sm-2 pt-3 pt-sm-2 w-100 text-center">
           <Card.Title className="pb-2 mt-4 fs-4">{title}</Card.Title>
           <Card.Subtitle className="pb-5 text-muted">{author}</Card.Subtitle>
-          <RecipeStats readyTime={readyInMinutes} servings={servings} />
+          <RecipeStats readyInMinutes={readyInMinutes} servings={servings} />
         </div>
       </div>
       {isLoading && <Loader />}
