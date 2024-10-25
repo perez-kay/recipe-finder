@@ -11,6 +11,7 @@ import LeftContainer from './Components/LeftContainer.js';
 import WelcomeMessage from './Components/WelcomeMessage.js';
 import { useState } from 'react';
 import BookmarkList from './Components/BookmarkList.js';
+import RecipeList from './Components/RecipeList.js';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -187,17 +188,11 @@ export default function App() {
                   />
                 )}
                 {!isListLoading && !listError && !showBookmarks && (
-                  <>
-                    {recipeList.map((recipe) => (
-                      <Recipe
-                        onSelectRecipe={handleSetRecipe}
-                        recipe={recipe}
-                        key={recipe.id}
-                      />
-                    ))}
-                  </>
+                  <RecipeList
+                    recipeList={recipeList}
+                    onSetRecipe={handleSetRecipe}
+                  />
                 )}
-
                 {listError && <ErrorMessage msg={listError} />}
               </LeftContainer>
             </Col>
