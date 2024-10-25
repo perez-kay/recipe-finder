@@ -10,6 +10,7 @@ import Recipe from './Components/Recipe';
 import LeftContainer from './Components/LeftContainer.js';
 import WelcomeMessage from './Components/WelcomeMessage.js';
 import { useState } from 'react';
+import BookmarkList from './Components/BookmarkList.js';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -19,7 +20,7 @@ function filterResults(results) {
     const filtered = {
       title,
       id,
-      creditsText,
+      author: creditsText,
       image,
       readyInMinutes,
       servings,
@@ -29,17 +30,30 @@ function filterResults(results) {
 }
 
 export default function App() {
+  // recipe related, used all around
   const [recipe, setRecipe] = useState(null);
   const [recipeList, setRecipeList] = useState([]);
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [isListLoading, setIsListLoading] = useState(false);
-  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
-  const [listError, setListError] = useState('');
-  const [detailsError, setDetailsError] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [steps, setSteps] = useState([]);
+
+  // used by NavBar and required for fetching recipeList
   const [query, setQuery] = useState('');
+
+  // bools for showing/hiding
+  const [showWelcome, setShowWelcome] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
+
+  // recipeList loading
+  const [isListLoading, setIsListLoading] = useState(false);
+
+  // recipe details (steps and ingredients) loading
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
+
+  // recipeList error
+  const [listError, setListError] = useState('');
+  // steps/ingredients error
+  const [detailsError, setDetailsError] = useState('');
+
   const [bookmarks, setBookmarks] = useState([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
 
@@ -167,20 +181,10 @@ export default function App() {
               <LeftContainer>
                 {isListLoading && <Loader />}
                 {!isListLoading && !listError && showBookmarks && (
-                  <>
-                    {bookmarks.length === 0 && (
-                      <h1 className="text-center mt-3">No bookmarks</h1>
-                    )}
-                    {bookmarks.map((bookmark) => (
-                      <Recipe
-                        onSelectRecipe={() =>
-                          handleShowBookmarkedRecipe(bookmark)
-                        }
-                        recipe={bookmark.recipe}
-                        key={bookmark.recipe.id}
-                      />
-                    ))}
-                  </>
+                  <BookmarkList
+                    bookmarks={bookmarks}
+                    onShowBookmarked={handleShowBookmarkedRecipe}
+                  />
                 )}
                 {!isListLoading && !listError && !showBookmarks && (
                   <>
