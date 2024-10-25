@@ -4,6 +4,8 @@ import Button from './Button';
 import RecipeStats from './RecipeStats';
 import { useEffect } from 'react';
 import Loader from './Loader';
+import RecipeSteps from './RecipeSteps';
+import RecipeIngredients from './RecipeIngredients';
 
 export default function RecipeDetails({
   recipe,
@@ -66,18 +68,8 @@ export default function RecipeDetails({
       {isLoading && <Loader />}
       {!isLoading && !detailsError && (
         <Card.Body>
-          <h5>Ingredients</h5>
-          <ul>
-            {ingredients.map((ingredient, i) => (
-              <li key={`ingredient${i}`}>{ingredient}</li>
-            ))}
-          </ul>
-          <h5>Instructions</h5>
-          <ol>
-            {steps.map((step, i) => (
-              <li key={`step${i}`}>{step}</li>
-            ))}
-          </ol>
+          <RecipeIngredients ingredients={ingredients} />
+          <RecipeSteps steps={steps} />
         </Card.Body>
       )}
       {detailsError && <ErrorMessage msg={detailsError} />}
