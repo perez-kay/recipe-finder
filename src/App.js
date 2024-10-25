@@ -6,8 +6,7 @@ import NavBar from './Components/NavBar';
 import Loader from './Components/Loader';
 import RecipeDetails from './Components/RecipeDetails.js';
 import ErrorMessage from './Components/ErrorMessage';
-import Recipe from './Components/Recipe';
-import LeftContainer from './Components/LeftContainer.js';
+import ListContainer from './Components/ListContainer.js';
 import WelcomeMessage from './Components/WelcomeMessage.js';
 import { useState } from 'react';
 import BookmarkList from './Components/BookmarkList.js';
@@ -179,7 +178,7 @@ export default function App() {
         ) : (
           <Row>
             <Col lg={6} className={showDetails && 'd-none d-lg-block'}>
-              <LeftContainer>
+              <ListContainer>
                 {isListLoading && <Loader />}
                 {!isListLoading && !listError && showBookmarks && (
                   <BookmarkList
@@ -194,7 +193,7 @@ export default function App() {
                   />
                 )}
                 {listError && <ErrorMessage msg={listError} />}
-              </LeftContainer>
+              </ListContainer>
             </Col>
             <Col lg={6}>
               {showDetails && (

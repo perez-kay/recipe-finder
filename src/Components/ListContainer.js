@@ -1,4 +1,4 @@
-export default function LeftContainer({ children }) {
+export default function ListContainer({ children }) {
   return (
     <div
       className="overflow-auto border rounded mt-3"
