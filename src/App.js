@@ -30,28 +30,21 @@ function filterResults(results) {
 }
 
 export default function App() {
-  // recipe related, used all around
   const [recipe, setRecipe] = useState(null);
   const [recipeList, setRecipeList] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [steps, setSteps] = useState([]);
 
-  // used by NavBar and required for fetching recipeList
   const [query, setQuery] = useState('');
 
-  // bools for showing/hiding
   const [showWelcome, setShowWelcome] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
 
-  // recipeList loading
   const [isListLoading, setIsListLoading] = useState(false);
 
-  // recipe details (steps and ingredients) loading
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
 
-  // recipeList error
   const [listError, setListError] = useState('');
-  // steps/ingredients error
   const [detailsError, setDetailsError] = useState('');
 
   const [bookmarks, setBookmarks] = useState([]);
